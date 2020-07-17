@@ -13,7 +13,7 @@ router.route('/testimonials/random').get((req, res) => {
 });
 
 router.route('/testimonials/:id').get((req, res) => {
-  res.json(db.testimonials[req.params.id - 1]);
+  res.json(db.testimonials.filter(item => item.id == req.params.id));
 });
 
 
@@ -37,14 +37,19 @@ router.route('/testimonials/:id').put((req, res) => {
     text: req.body.text,
   
   }
-  db.testimonials[req.params.id - 1] = newTestimonial;
+  const opinion = db.testimonials.find(item => item.id == req.params.id);
+  const index = db.testimonials.indexOf(opinion);
+  db.testimonials[index] = newTestimonial;
+
   res.json({message:'Ok'});
 });
 
 
 
 router.route('/testimonials/:id').delete((req, res) => {
-  db.testimonials.splice(db.testimonials[req.params.id], 1);
+  const opinion = db.testimonials.find(item => item.id == req.params.id);
+  const index = db.testimonials.indexOf(opinion);
+  db.testimonials.splice(index, 1);
   res.json({ message: 'OK' });
 });
 

@@ -8,7 +8,7 @@ router.route('/seats').get((req, res) => {
 });
 
 router.route('/seats/:id').get((req, res) => {
-  res.json(db.seats[req.params.id - 1]);
+  res.json(db.seats.filter(item => item.id == req.params.id));
 });
 
 
@@ -33,7 +33,7 @@ router.route('/seats').post((req, res) => {
 });
 
 
-router.route('/concerts/:id').put((req, res) => {
+router.route('/seats/:id').put((req, res) => {
   const {day, seat, client, email} = req.body;
   const updateSeat = {
     id: req.params.id,
@@ -43,14 +43,18 @@ router.route('/concerts/:id').put((req, res) => {
     email: req.body.email,
   
   }
-  db.seats[req.params.id - 1] = updateSeat;
+  const opinion = db.seats.find(item => item.id == req.params.id);
+  const index = db.seats.indexOf(opinion);
+  db.seats[index] = updateSeat; 
   res.json({message:'Ok'});
 });
 
 
 
 router.route('/seats/:id').delete((req, res) => {
-  db.seats.splice(db.seats[req.params.id], 1);
+  const opinion = db.seats.find(item => item.id == req.params.id);
+  const index = db.seats.indexOf(opinion);
+  db.seats.splice(index, 1);
   res.json({ message: 'OK' });
 });
 
