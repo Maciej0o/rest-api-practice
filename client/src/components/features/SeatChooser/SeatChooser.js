@@ -9,16 +9,16 @@ class SeatChooser extends React.Component {
   
   componentDidMount() {
     const { loadSeats, loadSeatsData } = this.props;
-    this.socket = io(process.env.NODE_ENV === 'production' ? '' : '8000');
-    this.socket.on('seatsUpdated', seats => {
+    
+    loadSeats();
+    this.socket = io.connect((process.env.NODE_ENV === 'production') ? '' : 'localhost:8000');
+    this.socket.on('seatsUpdated', (seats) => {
       loadSeatsData(seats);
     });
     loadSeats();
+
   }
 
-  componentWillUnmount() {
-    clearInterval(this.reloadSeats);
-  }
 
   isTaken = (seatId) => {
     const { seats, chosenDay } = this.props;
@@ -38,7 +38,7 @@ class SeatChooser extends React.Component {
   render() {
 
     const { prepareSeat } = this;
-    const { requests } = this.props;
+    const { requests, seats, chosenDay } = this.props;
 
     return (
       <div>
@@ -48,6 +48,10 @@ class SeatChooser extends React.Component {
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div>}
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].pending) && <Progress animated color="primary" value={50} /> }
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].error) && <Alert color="warning">Couldn't load seats...</Alert> }
+        <h3>
+          Free Seats:
+          {50 - seats.filter(client => client.day === chosenDay).length}/50
+        </h3>
       </div>
     )
   };
