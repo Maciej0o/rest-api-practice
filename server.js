@@ -2,13 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const socket = require('socket.io');
+const mongoose = require('mongoose');
 
-const app = express();
 
 
 const testimonialsRoutes = require('./routes/testimonials.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const concertsRoutes = require('./routes/concerts.routes');
+
+const app = express();
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false}));
@@ -36,6 +38,17 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Not found...' });
 });
 
+mongoose.connect('mongodb://localhost:27017/NewWaveApp', 
+{
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+});
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected to the database');
+});
+db.on('error', err => console.log('Error ' + err));
 
 
 const server = app.listen(process.env.PORT || 8000, () => {
