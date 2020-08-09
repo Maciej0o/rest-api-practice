@@ -37,13 +37,16 @@ app.get('*', (req, res) => {
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found...' });
 });
-
-mongoose.connect('mongodb+srv://john:johnjohn@cluster0.dojjw.mongodb.net/NewWaveApp?retryWrites=true&w=majority', 
-{
-  useNewUrlParser: true
-});
-const db = mongoose.connection;
-
+try{
+  mongoose.connect('mongodb+srv://john:john@cluster0.dojjw.mongodb.net/NewWaveApp?retryWrites=true&w=majority', 
+  {
+    useNewUrlParser: true
+  });
+  const db = mongoose.connection;
+}
+catch(e) {
+  console.log(e);
+}
 db.once('open', () => {
   console.log('Connected to the database');
 });
